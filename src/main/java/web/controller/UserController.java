@@ -1,7 +1,6 @@
 package web.controller;
 
 import javax.validation.Valid;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,18 +25,9 @@ public class UserController {
         this.userService = userService;
     }
 
-
-    @GetMapping(value = {"/", "/home"})
-    public String hello() {
-        return "home";
-    }
-
-
-    @PostMapping("/allUsers")
+    @GetMapping(value = {"/", "/allUsers"})
     public String displayAllUsers(Model model) {
-        System.out.println("User Page Requested: All Users");
-        List<User> userList = userService.getAllUsers();
-        model.addAttribute("userList", userList);
+        model.addAttribute("userList", userService.getAllUsers());
         return "allUsers";
     }
 
@@ -49,18 +39,12 @@ public class UserController {
     }
 
     @PostMapping("/addUser")
-    public String saveNewUser(@ModelAttribute User user, BindingResult result, Model model) {
+    public String saveNewUser(@ModelAttribute User user, BindingResult result) {
         if (result.hasErrors()) {
             return "error";
         }
-
-        boolean isAdded = userService.saveUser(user);
-        if (isAdded) {
-            model.addAttribute("message", "New user successfully added");
-        } else {
-            return "error";
-        }
-        return "redirect:/home";
+        userService.saveUser(user);
+        return "redirect:/allUsers";
     }
 
     @GetMapping("/editUser")
@@ -74,21 +58,16 @@ public class UserController {
     @PostMapping("/editUser")
     public String saveEditedUser(@ModelAttribute("user") @Valid User user, BindingResult result) {
         if (result.hasErrors()) {
-            System.out.println(result);
             return "error";
         }
-        boolean isSaved = userService.saveUser(user);
-        if (!isSaved) {
-            return "error";
-        }
-        return "redirect:/home";
+        userService.saveUser(user);
+        return "redirect:/allUsers";
     }
 
     @GetMapping("/deleteUser")
     public String deleteUserById(@RequestParam("id") Long id) {
-        boolean isDeleted = userService.deleteUserById(id);
-        System.out.println("User deletion response: " + isDeleted);
-        return "redirect:/home";
+        userService.deleteUser(id);
+        return "redirect:/allUsers";
     }
 
 }
