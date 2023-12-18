@@ -15,7 +15,7 @@ public class UserServiceImp implements UserService {
 
     @Autowired
     public UserServiceImp(UserRepository repository) {
-        super();
+        super();//todo: ..коллективная ошибка. Таки - зачем?
         this.repository = repository;
     }
 
